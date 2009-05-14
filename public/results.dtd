@@ -1,0 +1,15 @@
+<!ELEMENT collection ( record+ ) >
+
+<!ELEMENT collectionname ( #PCDATA ) >
+
+<!ELEMENT collectionurl ( #PCDATA ) >
+
+<!ELEMENT full ( #PCDATA ) >
+
+<!ELEMENT record ( collectionname, collectionurl, url, thumb, title, full ) >
+
+<!ELEMENT thumb ( #PCDATA ) >
+
+<!ELEMENT title ( #PCDATA ) >
+
+<!ELEMENT url ( #PCDATA ) >

@@ -1,0 +1,8 @@
+- results.each do |collection,result|
+  %h1= collection
+  - result.each do |r|
+    %ul
+      %li= r[:title]
+      %li= r[:url]
+      %li= r[:thumb]
+      %li= r[:full]
