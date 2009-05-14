@@ -1,7 +1,7 @@
+require 'dpf99'
 require 'pathname'
 require 'rubygems'
 require 'mechanize'
-require 'dpf99'
 
 PDF = "* a pdf file *"
 
