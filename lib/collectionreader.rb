@@ -31,9 +31,14 @@ class CollectionReader
         url = table.search('a').first['href']
         page = agent.get(url).root
         title = clean(page.at("td.LabelBold").text)
-        img_url =page.css('td.OutlineFaint td.outline a')[1]['href'].match(/StartItemWin\('(.*)',/)[1] 
-        full_img = agent.get(img_url).root.css('img').first['src']
         thumb_img = table.search('img').first['src']
+        img_a = page.css('td.OutlineFaint td.outline a')[1]
+        if img_a.nil? # Some image do not have a full-res version
+          full_img = thumb_img
+        else
+          img_url =page.css('td.OutlineFaint td.outline a')[1]['href'].match(/StartItemWin\('(.*)',/)[1] 
+          full_img = agent.get(img_url).root.css('img').first['src']
+        end
         acc << {:url => url, :thumb => thumb_img, :full => full_img, :title => title, :collection => collection, :collection_url => collection_url}
         end
     },
@@ -109,5 +114,5 @@ class CollectionReader
 end
 
 if $0 == __FILE__
-  pp CollectionReader.fetch("root","pmtcards")
+  pp CollectionReader.fetch("pol","aids")
 end
