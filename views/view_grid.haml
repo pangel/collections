@@ -1,0 +1,7 @@
+= partial :switch
+#grid
+  - @results.each do |collection,result|
+    %h2= collection
+    - result.each do |r|
+      %a{:href => r[:url], :target => "_blank"}
+        %img{:src => r[:thumb], :alt => r[:title]}

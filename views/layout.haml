@@ -1,0 +1,33 @@
+!!!
+%html
+  %head
+    %meta{'http-equiv' => "Content-type", :content => "text/html;charset=utf-8"}/
+    %link{:href =>"/stylesheets/reset.css", :media => "screen", :rel => "stylesheet", :type => "text/css"}
+    %link{:href => "/stylesheets/style.css", :media => "screen", :rel => "stylesheet", :type => "text/css"}
+    /%link{:rel => "alternate", :href => url('rss', :q => @q,:p => @p), :type => "application/rss+xml", :title => "", :id => "gallery"}
+  %title UCLA Digital Collection
+  %body
+    %h1 Search UCLA Digital Collections
+
+    %form{:action => "/", :method => "get"}
+      %div#search
+        %label query
+        %input{:type => "text", :name => "q", :value => @query}
+      %div#format
+        %label format
+        %select{:name => "f"}
+          - %w(html xml yaml).each do |option|
+            %option{:value => option, :selected => (option == @format)}= option
+      %div#sources
+        %label sources
+        %div
+        - @sources = ["aids"] unless @sources
+        - %w(aids dpf99 latimes pmtcards).each do |source|
+          %div
+            %label= source
+            %input{:type => "checkbox", :name => "s", :value => source, :checked => @sources.include?(source)}
+      %input#submit{:type => "submit"}
+
+    = yield
+    #bottom>
+      %a{:href => "http://github.com/pangel/latimes-cooliris/issues"} Feedback (You'll need a Github account)

@@ -1,0 +1,8 @@
+#switch
+  Switch styles:
+  - @format = "grid" unless @format
+  - %w(grid list).each do |style|
+    - if style == @style
+      = style.capitalize
+    - else
+      %a{:href => "#{@url_minus_style}&st=#{style}"}= style.capitalize

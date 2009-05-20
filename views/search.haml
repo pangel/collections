@@ -1,28 +1,2 @@
-!!!
-%html
-  %head
-    %meta{'http-equiv' => "Content-type", :content => "text/html;charset=utf-8"}/
-    %link{:href =>"/stylesheets/reset.css", :media => "screen", :rel => "stylesheet", :type => "text/css"}
-    %link{:href => "/stylesheets/style.css", :media => "screen", :rel => "stylesheet", :type => "text/css"}
-  %body
-    %form{:action => "/", :method => "get"}
-      %div#search
-        %label query
-        %input{:type => "text", :name => "q"}
-      %div#format
-        %label format
-        %select{:name => "f"}
-          %option{:value => "html"} html
-          %option{:value => "xml"} xml
-          %option{:value => "yaml"} yaml
-      %div#sources
-        %label sources
-        %div
-          %label aids
-          %input{:type => "checkbox", :name => "s", :value => "aids"}
-        %div
-          %label dpf99
-          %input{:type => "checkbox", :name => "s", :value => "dpf99"}
-      %input#submit{:type => "submit"}
-
+.message Search something
       

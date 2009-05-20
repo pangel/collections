@@ -1,9 +1,10 @@
+require 'open-uri'
 require 'dpf99'
 require 'pathname'
 require 'rubygems'
 require 'mechanize'
 
-PDF = "* a pdf file *"
+PDF = "/images/pdf.png"
 
 class CollectionReader
   @@agent = WWW::Mechanize.new
@@ -43,6 +44,39 @@ class CollectionReader
       Collections::DPF99.generate
       Collections::DPF99.search(query)[1].map { |r| {:url => "#{r[1][:link]}.html", :thumb => PDF, :full => "#{r[1][:link]}.pdf", :title => r[1][:title], :collection => collection, :collection_url => collection_url }
       }
+    },
+    "latimes" => Proc.new { |query|
+      collection = "Changing Times: Los Angeles in Photographs, 1920-1990"
+      collection_url = "http://unitproj.library.ucla.edu/dlib/lat/"
+      req = "http://unitproj.library.ucla.edu/dlib/lat/search.cfm?k=#{query}&w=none&x=title&y=none&z=none&all"
+      doc = Nokogiri::HTML open(req)
+      elements = []
+      (doc/'a[@href^="display.cfm"]').each do |el|
+        elements << el if (not el.at("img").nil?)
+      end
+      elements.map! do |el|
+        url = collection_url + el[:href]
+        thumb = el.at("img")[:src]
+        full = el.at("img")[:src].sub(/i\.gif/, "j.jpg")
+        title = el.next_sibling.next_sibling.inner_text
+        {:thumb => thumb, :full => full, :title => title, :url => url, :collection => collection, :collection_url => collection_url}
+      end
+    },
+    "pmtcards" => Proc.new { |query|
+      collection = "Patent Medicine Trade Cards"
+      collection_url ="http://unitproj.library.ucla.edu/dlib/medicinecards/"
+      req = "http://unitproj.library.ucla.edu/dlib/medicinecards/search.cfm?k=#{query}&all"
+      doc = Nokogiri::HTML open(req)
+      elements = (doc/'a[@href^="display.cfm"]').inject([]) do |acc,el|
+          acc << el if (not el.at("img").nil?)
+        end
+        elements.map! do |el|
+          url = collection_url + el[:href]
+          thumb = el.at("img")[:src]
+          full = el.at("img")[:src].sub(/i\.gif/, "j.jpg")
+          title = el.parent.parent.next_sibling.inner_text
+          {:thumb => thumb, :full => full, :title => title, :url => url, :collection => collection, :collection_url => collection_url}
+        end
     }
   }
   def self.fetch(query, *sources)
@@ -75,5 +109,5 @@ class CollectionReader
 end
 
 if $0 == __FILE__
-  pp CollectionReader.fetch("high","aids")
+  pp CollectionReader.fetch("root","pmtcards")
 end
