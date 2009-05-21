@@ -95,16 +95,18 @@ class CollectionReader
     markup = ""
     xml_markup = Builder::XmlMarkup.new :indent => 2, :target => markup
     xml_markup.instruct! :xml, :version=>"1.0", :encoding=>"UTF-8"
-    collections.each do |collection,records|
-      xml_markup.collection do |c|
-        records.each do |result|
-          xml_markup.record do |r|
-            r.collectionname result[:collection]
-            r.collectionurl result[:collection_url]
-            r.url result[:url]
-            r.thumb result[:thumb]
-            r.title result[:title]
-            r.full result[:full]
+    xml_markup.results do |results|
+      collections.each do |collection_name,records|
+        results.collection("name"=>collection_name) do |c|
+          records.each do |record|
+            c.record do |r|
+              r.collectionname record[:collection]
+              r.collectionurl record[:collection_url]
+              r.url record[:url]
+              r.thumb record[:thumb]
+              r.title record[:title]
+              r.full record[:full]
+            end
           end
         end
       end
