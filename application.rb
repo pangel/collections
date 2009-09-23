@@ -33,15 +33,6 @@ helpers do
     ]
   end
   
-  class Array
-    def each_slice_with_index(slice_size)
-      nb_slices = (self.size.to_f/slice_size).ceil
-      for i in 0...nb_slices
-        yield self[i*slice_size,slice_size], i
-      end
-    end
-  end
-  
   # Returns the ceiling of the division of q by d
   # Using float is not precise enough
   def nbslices(q,d)
@@ -57,12 +48,12 @@ get '/stylesheets/style.css' do
 end
 
 get '/' do
+  @query = params["q"]
+  @sources = params["s"] || []
+  @format = params["f"]
+  
   return haml(:search) if params["q"].nil? or params["q"].empty?
   return haml(:nosources) unless params["s"]
-  
-  @query = params["q"]
-  @sources = params["s"]
-  @format = params["f"]
   
   if params["st"] == "panel"
     @results = CollectionReader.fetch_flat(@query, *@sources).flatten
@@ -82,7 +73,7 @@ get '/' do
   else
     params_minus_style = request.params.reject { |k,v| k == "st"}
     @url_minus_style = "#{request.path_info}?#{build_query(params_minus_style)}"
-    @style = params["st"] || "grid"
+    @style = (params["st"] && !params["st"].empty?) || "grid"
     return haml("view_#{@style}".to_sym)
   end               
 end
