@@ -90,6 +90,11 @@ class CollectionReader
    return results
   end
   
+  def self.fetch_flat(query, *sources)
+    results = Hash.new { |hash, key| hash[key] = @@collections[key].call(query) }
+    return results.values_at *sources
+  end
+ 
   def self.xml(collections)
     require 'builder'
     markup = ""

@@ -1,0 +1,23 @@
+#filter
+  Filter by:
+  - filtering_options.each do |foption|
+    - filter_type, filter_categories = foption[0], foption[1]
+    %a{:id => "filter-#{filter_type}", :class => "filter-option", :href=>"#"}= filter_type
+    %form{:id => "#{filter_type}-selector", :class => "selector"}
+      %input{:type => "hidden", :name => "q", :value => @query}
+      %input{:type => "hidden", :name =>"f", :value => @format}
+      %input{:type => "hidden", :name => "st", :value => @style}
+      - filter_categories.each do |category, options|
+        .selector-column
+          %p.selector-title= category
+          - options.each do |option|
+            %ul
+              %li
+                %input{:type => "checkbox", :id => option[0], :name => "s", :value => option[0], :checked => @sources.include?(option[0])}
+                %label{:for => option[0]}= option[1]
+      .selector-actions
+        %button#search Search
+        %button#select-all Select all
+        %button#reset Reset
+        %a#close-collection-selector{:href => "#"} Close
+    = "or" unless filter_type == "image"

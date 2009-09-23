@@ -1,13 +1,52 @@
 require 'sinatra'
 require 'environment'
 
+
 configure do
   set :views, "#{File.dirname(__FILE__)}/views"
 end
 
 helpers do
+  include Rack::Utils
+  alias_method :h, :escape_html
+
   def partial(name, options={})
-    haml name, options.merge(:layout => false)
+    haml "_#{name}".to_sym, options.merge(:layout => false)
+  end
+  
+  def filtering_options
+    [
+      [
+        "collection",
+        {
+          "Science & Health" => [
+            ["aids","AIDS Campaign Posters"], 
+            ["dpf99", "American Physical Society, Division of Particles and Fields"],
+            ["pmtcards", "Patent Medicine trading cards"],
+          ],
+          
+          "History" => [
+            ["latimes", "LA Times photograph archive"]
+          ]
+        }  
+      ]
+    ]
+  end
+  
+  class Array
+    def each_slice_with_index(slice_size)
+      nb_slices = (self.size.to_f/slice_size).ceil
+      for i in 0...nb_slices
+        yield self[i*slice_size,slice_size], i
+      end
+    end
+  end
+  
+  # Returns the ceiling of the division of q by d
+  # Using float is not precise enough
+  def nbslices(q,d)
+    divmod = q.divmod(d)
+    divmod[0] + (divmod[1] > 0 ? 1 : 0)
   end
 end
 
@@ -25,7 +64,13 @@ get '/' do
   @sources = params["s"]
   @format = params["f"]
   
-  @results = CollectionReader.fetch @query, *@sources
+  if params["st"] == "panel"
+    @results = CollectionReader.fetch_flat(@query, *@sources).flatten
+    @nresults = @results.size
+  else
+    @results = CollectionReader.fetch @query, *@sources
+    @nresults = @results.inject(0) { |acc,arr| acc+arr[1].size}
+  end
   
   case @format
   when "xml"
@@ -43,5 +88,5 @@ get '/' do
 end
 
 get '/test' do
-  haml request.params.reject { |k,v| k == "salut" }.inspect
+  p options.haml
 end
