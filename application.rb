@@ -73,7 +73,7 @@ get '/' do
   else
     params_minus_style = request.params.reject { |k,v| k == "st"}
     @url_minus_style = "#{request.path_info}?#{build_query(params_minus_style)}"
-    @style = (params["st"] && !params["st"].empty?) || "grid"
+    @style = (params["st"] && !params["st"].empty?) ? params["st"] : "grid"
     return haml("view_#{@style}".to_sym)
   end               
 end
