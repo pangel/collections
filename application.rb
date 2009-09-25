@@ -39,6 +39,14 @@ helpers do
     divmod = q.divmod(d)
     divmod[0] + (divmod[1] > 0 ? 1 : 0)
   end
+  
+  class Array
+    def each_slice_with_index(slice_size)
+      self.enum_slice(slice_size).each_with_index { |slice,index| 
+        yield slice,index
+      }
+    end
+  end
 end
 
 # Sass stylesheet
