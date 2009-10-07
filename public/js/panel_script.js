@@ -1,14 +1,16 @@
-
 $(document).ready(function() {
-  
+
+  // Initialize the appearance of block-selector 0
+  $('.block-selector').eq(0).toggleClass('block-selected',true);
+
   // The panels display requires the menu to be fixed
   $("#menu-wrapper, #blocksmenu").css("position","fixed");
-  
+
   // Offsets the blocks&images so that it doesn't overlap with the fixed menu.
   // If the height of the menu was known, a static css properly would work.
   $('#blocksmenu').css({'margin-top':$('#menu-wrapper').height()});
   $('#document').css({'padding-top':$('#menu-wrapper').height()+$('#blocksmenu').innerHeight()+'px'});
-  
+
   // Animation for putting an image back to normal state
   $.fn.extend({
     shrink: function() {
@@ -20,10 +22,10 @@ $(document).ready(function() {
       },
         750);
   }});
-  
+
   // A container for every image's metadata
   details_store = {};
-  
+
   // Browsers handle window scrolling differently.
   // Chrome and Safari use <body>, while Opera, FF and IE use <html>
   // Warning: this doesn't seem to be future-proof. $.browser.safari might return false for Chrome some day.
@@ -43,7 +45,7 @@ $(document).ready(function() {
 
   // The image currently enlarged.
   var big_img;
-  
+
   // A block is a small grid of images.
 
   // The id of the block currently clicked.
@@ -55,22 +57,22 @@ $(document).ready(function() {
     $('#imgcol a').attr('href', details_store[image_id].collection_url).text(details_store[image_id].collection);
     $('#imglink').attr('href', details_store[image_id].url);
   }
-  
+
   // Go from current_block_id to new_block_id
   // offset argument is optional; the caller might include it if it has a faster way to compute it.
   function select_block(new_block_id,offset) {
     new_block_id = parseInt(new_block_id);
-    
+
     if (new_block_id != current_block_id) {
       var offset = offset || $('.imgblock').eq(new_block_id).offset().left;
       $(scrollable).stop().animate({scrollLeft: offset-25}, 500);
-      
+
       $('.block-selector').eq(current_block_id).toggleClass('block-selected',false);
       current_block_id = new_block_id;
       $('.block-selector').eq(current_block_id).toggleClass('block-selected',true);
     }
-  } 
-  
+  }
+
   // Special info box to help the user who enlarged a picture
   $('body').append('<div id="help-box">Click again to shrink the image.</div>')
 
@@ -148,13 +150,13 @@ $(document).ready(function() {
           show_details(iid);
           details.css("visibility", "visible")
           details.animate({"right":"0"});
-          
+
         } else {
           details.find('p').hide();
           show_details(iid);
           details.find('p').fadeIn(750);
         }
-        
+
         var $block = $(this).parent().parent();
         var new_block_id = parseInt($block.attr('id').substring(1));
         var offset = $block.offset().left;
@@ -181,24 +183,24 @@ $(document).ready(function() {
       (current_block_id < max_block_id) ? select_block(current_block_id+1) : select_block(0);
       return false;
     });
-    
+
   // DEVELOPMENT UTILITIES
-  
-  function update_z_status() {
-  $(".zindex").each(function() { 
-    var k = $(this).parent().find("img").css('z-index'); 
-    $(this).text(k);
-    });
-  }
-  
-  $(window).keydown(
-    function(event) {
-      switch(event.keyCode) {
-        case 90: // Letter "z"
-          update_z_status();
-          return false;
-      }
-    }
-  );
-  
+
+  // function update_z_status() {
+  //   $(".zindex").each(function() {
+  //     var k = $(this).parent().find("img").css('z-index');
+  //     $(this).text(k);
+  //     });
+  //   }
+  //
+  //   $(window).keydown(
+  //     function(event) {
+  //       switch(event.keyCode) {
+  //         case 90: // Letter "z"
+  //           update_z_status();
+  //           return false;
+  //       }
+  //     }
+  //   );
+  //
 });

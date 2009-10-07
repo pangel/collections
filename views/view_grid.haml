@@ -1,6 +1,9 @@
 #grid
   - @results.each do |collection,result|
     %h2= collection
-    - result.each do |r|
-      %a{:href => r[:url], :target => "_blank"}
-        %img{:src => r[:thumb], :alt => r[:title]}
+    - if result.nil?
+      .message No results for this collection.
+    - else 
+      - result.each do |r|
+        %a{:href => r[:url], :target => "_blank"}
+          %img{:src => r[:thumb], :alt => r[:title]}

@@ -5,7 +5,7 @@
     %link{:href =>"/stylesheets/reset.css", :media => "screen", :rel => "stylesheet", :type => "text/css"}
     %link{:href => "/stylesheets/style.css", :media => "screen", :rel => "stylesheet", :type => "text/css"}
     %link{:href =>"/stylesheets/style_panel.css", :media => "screen", :rel => "stylesheet", :type => "text/css"}
-    -#%link{:rel => "alternate", :href => url('rss', :q => @q,:p => @p), :type => "application/rss+xml", :title => "", :id => "gallery"}
+    %link{:rel => "alternate", :href => @rss_url, :type => "application/rss+xml", :title => "", :id => "gallery"}
     %script{:type => "text/javascript", :src => "/js/jquery-1.3.2.js"}
     %script{:type => "text/javascript", :src => "/js/jquery-ui-1.7.2.js"}
     %script{:type => "text/javascript", :src => "/js/main_script.js"}
@@ -14,20 +14,16 @@
   %title UCLA Digital Collection
   %body
     #menu-wrapper
-      %p#title  UCLA Images collection: results of your search &lt;test search&gt;
+      %p#title
+        UCLA Images collection
       %form#search{:action => "/", :method => "get"}
         %input{:type => "hidden", :name => "st", :value => @style}
         %div#query
-          %label query
+          %label Search for
           %input{:type => "text", :name => "q", :value => @query}
-        %div#format
-          %label format
-          %select{:name => "f"}
-            - %w(html xml yaml).each do |option|
-              %option{:value => option, :selected => (option == @format)}= option
-        %input#submit{:type => "submit"}
-      #menu
+          %label= "in #{sources_display}"
         =partial :filter
+      #menu
         #switch
           Switch styles:
           - %w(grid list panel).each do |style|

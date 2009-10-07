@@ -1,9 +1,6 @@
 $(document).ready(function() {
 
-  // Initialize the appearance of block-selector 0
-  $('.block-selector').eq(0).toggleClass('block-selected',true);
-      
-  $('.filter-option').click(function() {
+  $('.filter-option').hover(function() {
     $('.filter-option').toggleClass('filter-option-activated',false);
     $('.selector').css({"visibility":"hidden"});
 

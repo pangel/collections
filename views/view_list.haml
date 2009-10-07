@@ -1,16 +1,19 @@
 #list
   - @results.each do |collection,result|
     %h2= collection
-    - result.each do |r|
-      .result
-        %a{:href => r[:url], :target => "_blank"}
-          %img{:src => r[:thumb], :alt => r[:title]}
-        .details
-          %h3= r[:title]
-          %p>
-            In
-            %a{:href => r[:collection_url]}= r[:collection]
-          %p>
-            %a{:href => r[:full]} See full resolution
-          %p>
-            %a{:href => r[:url]} See on collection website
+    - if result.nil?
+      .message No results for this collection.
+    - else
+      - result.each do |r|
+        .result
+          %a{:href => r[:url], :target => "_blank"}
+            %img{:src => r[:thumb], :alt => r[:title]}
+          .details
+            %h3= r[:title]
+            %p>
+              In
+              %a{:href => r[:collection_url]}= r[:collection]
+            %p>
+              %a{:href => r[:full]} See full resolution
+            %p>
+              %a{:href => r[:url]} See on collection website

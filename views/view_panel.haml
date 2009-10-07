@@ -1,9 +1,9 @@
 - details_store = ""
 - nbslices = nbslices(@results.size,20)
 #blocksmenu
-  %a{:href => "#", :id => "prev-block", 
+  %a{:href => "#", :id => "prev-block",
      :class => "block-menu", :title => "Go to previous block"}
-  %a{:href => "#", :id => "next-block", 
+  %a{:href => "#", :id => "next-block",
      :class => "block-menu", :title => "Go to next block"}
   - nbslices.times do |i|
     %a{:href => "#", :class => "block-menu block-selector", :id => "bs#{i}"}= "block #{i+1}"
@@ -21,15 +21,19 @@
 #details
   %p#imgtitle Image title
   %p#imgcol
-    In 
+    In
     %a Image collection
   %a#imglink Link to image
 :javascript
       $(document).ready(function() {
-        
+
         // The number of blocks in the page, minus 1, since indexes start at 0.
         max_block_id = #{nbslices-1};
-        
+
+        // Set the width of the container #document so the image blocks do not overflow
+        var document_width = #{nbslices} * (525 + 105)
+        $('#document').css({'width':document_width});
+
         // Results' metadata
         #{details_store}
       });

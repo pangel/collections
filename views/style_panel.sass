@@ -1,0 +1,282 @@
+body
+  font-family: "Helvetica", "Arial", sans-serif
+
+#development, #current
+  width: 100%
+  font-size: 0.8em
+  line-height: 2
+  padding-left: 1em
+
+
+#menu-wrapper
+  width: 100%
+  margin: 25px 0px 0px 25px
+
+  #title
+    font-weight: bold
+    margin-bottom: 1em
+
+
+#development
+  background-color: #F8FFC4
+  border-bottom: 1px solid #D2E741
+
+
+#current
+  background-color: #E1EFF7
+  border-bottom: 1px solid #9FC3D7
+
+
+#search
+  #query, #filter, #submit
+    float: left
+
+  > div > label
+    font-size: 0.8em
+
+  #format, #sources
+    margin-left: 2em
+
+  #query input
+    font-family: "Helvetica", "Arial", sans-serif
+    
+#filter
+  font-size: 0.8em
+  //  position: relative
+  line-height: 1.7
+a
+  &.filter-option
+    color: blue
+    font-variant: small-caps
+    font-weight: normal
+    padding: .2em 1em
+
+    &:hover
+      color: black
+      border: none
+      background: #BFBFBF
+      filter: alpha(opacity=90)
+      -moz-opacity: 0.90
+      -khtml-opacity: 0.90
+
+  &.filter-option-activated
+    color: black
+    border: none
+    background: #BFBFBF
+    filter: alpha(opacity=90)
+    -moz-opacity: 0.90
+    -khtml-opacity: 0.90
+    background: #CCCCCC
+    text-decoration: none
+    border-bottom: 2px solid black
+
+
+.selector
+  border-top: 1px solid #AAAAAA
+  padding: 0.3em
+  position: absolute
+  top: 1.6em
+  background: #CCCCCC
+  filter: alpha(opacity=90)
+  -moz-opacity: 0.90
+  -khtml-opacity: 0.90
+  visibility: hidden
+  z-index: 999999
+
+.selector-column
+  float: left
+  padding: 1em
+
+  p.selector-title
+    font-variant: small-caps
+    text-transform: uppercase
+    margin-bottom: 0.8em
+    font-size: 1.1em
+    font-weight: bold
+
+  li
+    border-top: 1px dashed #666666
+    clear: both
+    float: left
+    line-height: 1.3
+    padding: 0.8em 0em
+    position: relative
+
+    &:hover
+      background-color: #BBBBBB
+
+    input
+      vertical-align: top
+      margin-right: 0.5em
+      float: left
+
+    label
+      display: inline
+      width: 20em
+      letter-spacing: 0px
+
+.selector-actions
+  margin: 1em
+  padding-top: 1em
+  border-top: 1px solid #888888
+  clear: both
+
+  button
+    margin-right: 0.6em
+
+  a
+    color: blue
+
+    &:hover
+      color: red
+
+a.filter-options
+  font-variant: small-caps
+
+#menu
+  margin: 15px 0px 15px 0px
+  padding-top: 0.5em
+  line-height: 1.5
+  clear: both
+
+#blocksmenu
+  margin-left: 25px
+  padding-top: 1em
+
+  a.block-selector
+    display: block
+    float: left
+    font-variant: small-caps
+    font-size: 0.7em
+    background: #EFEFEF
+    padding: 0.5em
+    margin: 1em 1em 1em 0em
+    text-decoration: none
+    color: black
+
+    &:hover
+      background: #D7D7D7
+
+  p a
+    font-variant: small-caps
+
+  a
+    &.block-menu
+      display: block
+      float: left
+      font-size: 0.7em
+      padding: 0.5em
+      margin: 1em 1em 1em 0em
+      text-decoration: none
+
+    &.block-selector
+      font-variant: small-caps
+      background: #EFEFEF
+      color: black
+
+      &:hover
+        background: #D7D7D7
+
+    &.block-selected
+      background: #9B9B9B
+
+
+#menu a.block-selected:hover
+  background: #9B9B9B
+
+
+#blocksmenu
+  #prev-block, #next-block
+    padding: 0em
+    margin-top: 1.4em
+    width: 28px
+    height: 21px
+
+  #prev-block
+    background-image: url(/images/prev-block-off.gif)
+    margin-left: 15px
+
+    &:hover
+      background-image: url(/images/prev-block-on.gif)
+
+  #next-block
+    background-image: url(/images/next-block-off.gif)
+    margin-right: 3em
+
+    &:hover
+      background-image: url(/images/next-block-on.gif)
+
+
+#document
+  margin-left: 25px
+  width: 4100px
+  clear: both
+
+  .imgcontainer
+    position: relative
+    width: 100px
+    height: 75px
+    float: left
+    margin: 0px 5px 5px 0px
+
+  .imgblock
+    margin-right: 105px
+    float: left
+    width: auto
+
+  .nextline
+    clear: both
+    border: 0px
+    height: 0px
+    visibility: hidden
+
+  .thumb
+    position: absolute
+    width: 100px
+    height: 75px
+
+  .big
+    width: 200px
+    height: 150px
+    border-width: 0px 10px 10px 0px
+
+
+#details
+  visibility: hidden
+  position: fixed
+  right: -340px
+  top: 0px
+  height: 100%
+  width: 300px
+  background: #CCCCCC
+  filter: alpha(opacity=80)
+  -moz-opacity: 0.8
+  -khtml-opacity: 0.8
+  opacity: 0.8
+  padding: 80px 20px 10px 20px
+  z-index: 99999
+
+  p
+    font-size: 0.8em
+    line-height: 1.2
+    margin-bottom: 1em
+
+    &#imgtitle
+      font-weight: bold
+
+  a#imglink
+    display: block
+    padding-top: 1.3em
+    font-size: 0.6em
+
+
+#help-box
+  position: absolute
+  display: none
+  z-index: 999999
+  font-size: 0.8em
+  background: #D7D7D7
+  font-weight: bold
+  width: 600px
+  text-align: center
+  padding: 5px 0px
