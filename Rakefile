@@ -4,13 +4,16 @@
   require File.join(File.expand_path(File.dirname(__FILE__)), "lib", file)
 }
 
+Reader.database(RedisDB.connect)
+Loader.database(RedisDB.connect)
+
 namespace :db do
   desc "Starts the redis server"
   task :start do
     conf_file = File.join(File.expand_path(File.dirname(__FILE__)),"redis.conf")
     resp = `redis-server #{conf_file}`
     if resp.empty?
-      RedisDB.connect.set "db:name", APP_NAME
+      RedisDB.set "db:name", APP_NAME
       puts "Redis server started on port #{REDIS_PORT}."
     else
       puts "Redis server responded:\n#{resp}"
@@ -38,12 +41,12 @@ namespace :db do
 
   desc "Drops all the database content"
   task :drop do
-    puts "Redis database is now empty." if RedisDB.connect.flushall
+    puts "Redis database is now empty." if RedisDB.flushall
   end
 
   desc "Loads the database with all the available collections"
   task :load do
-    puts "Loaded all collections" if Loader.database(RedisDB.connect).write_collections
+    puts "Loaded all collections" if Loader.write_collections
   end
 
   task :console do
@@ -71,7 +74,7 @@ namespace :db do
       end
     end
 
-    db = RedisDB.connect
+    db = RedisDB
 
     puts "You are now in irb. Database object is db"
     IRB.start_session(binding)
@@ -85,12 +88,12 @@ namespace :db do
 
   desc "Writes DB to disk."
   task :save do
-    RedisDB.connect.save
+    RedisDB.save
   end
 
   desc "Rebuilds the index from scratch"
   task :index do
-    puts "All images' metadata successfully indexed" if Reader.database(RedisDB.connect).make_index
+    puts "All images' metadata successfully indexed" if Reader.make_index
   end
 
   desc "Runs a full text search using the given query"
