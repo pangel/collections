@@ -97,8 +97,8 @@ namespace :db do
   end
 
   desc "Runs a full text search using the given query"
-  task :search, :query do |t,args|
-    p Reader.database(RedisDB.connect).search(args[:query])
-
+  task :search, :query, :source do |t,args|
+    source = args[:source] || "latimes"
+    puts Reader.search(args[:query], source)
   end
 end

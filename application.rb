@@ -6,7 +6,7 @@ configure do
 
   # FIXME Might cause concurrency issues when multiple instances of the app are running.
   DB = RedisDB.connect
-
+  Reader.database(DB)
   Option = Struct.new :type, :display, :items
   Options = Array.new
   Options << Option.new('collection', "Select other sources", { "History" => [["latimes", "LA Times photograph archive"]] })
@@ -65,24 +65,24 @@ end
 
 get '/' do
   @query = params["q"]
-  @sources = params["s"]
+  @sources = params["s"] || ['latimes']
   @format = params["f"]
 
   return haml(:search) if params["q"].nil? or params["q"].empty?
 
-  @results = Reader.database(DB).search(@query, @sources)
-
-
   if params["st"] == "panel"
-    @results = @results.map { |k,v|
-      (v && v.map { |raw| build_image(raw) })
-    }.flatten.compact
+    # Panel view does not sort the results by collection
+    @results = @sources.reduce([]) do |acc,source|
+      acc + Reader.search(@query, source).map { |raw| build_image(raw) }
+    end
     @nresults = @results.size
   else
-    @results.each do |k,v|
-        @results[k] = v.map { |raw| build_image(raw) } unless v.nil?
-      end
-    @nresults = @results.inject(0) { |acc,arr| acc + (arr[1].nil? ? 0 : arr[1].size)}
+    @nresults = 0
+    @results = @sources.reduce({}) do |acc,source|
+      images = Reader.search(@query, source).map { |raw| build_image(raw) }
+      @nresults += images.size
+      acc.merge source => images
+    end
   end
 
   case @format
@@ -94,15 +94,15 @@ get '/' do
     @results.to_yaml
   when "rss"
     response["Content-Type"] = "text/xml; charset=utf-8"
-    @results = @results.map { |k,v|
-      v.map { |raw| build_image(raw) }
-    }.flatten
+    @results = @sources.reduce([]) do |acc,source|
+      acc + Reader.search(@query, source).map { |raw| build_image(raw) }
+    end
 
     x = Builder::XmlMarkup.new(:indent=>2)
     x.instruct!
     x << '<rss version="2.0" xmlns:media="http://search.yahoo.com/mrss"   xmlns:atom="http://www.w3.org/2005/Atom">'
     x.channel {
-      x.title "UCLA!"
+      x.title "UCLA Digital Collections Cooliris RSS feed"
       x.language "en-US"
       @results.each { |pic|
         x.item {
@@ -123,7 +123,7 @@ get '/' do
 
     @style = (params["st"] && !params["st"].empty?) ? params["st"] : "grid"
 
-    return haml(:noresults) if @results.first.nil?
+    return haml(:noresults) if @results.empty?
     return haml("view_#{@style}".to_sym)
   end
 end

@@ -24,7 +24,7 @@ class Reader
     # end
 
   def self.index_image image_id, content
-      content.tokenize_for_indexing.each { |word|
+      content.tokenize.each { |word|
         @@db.sadd("wordindex:#{Digest::MD5.hexdigest(word)}",image_id)
       }
   end
@@ -36,11 +36,11 @@ class Reader
 
   def self.make_index
     remove_index
-    collections = @@db.lrange "global:collections", 0, -1
+    collections = @@db.smembers "global:collections"
     puts("There are no collections in the database") and return false if collections.empty?
     collections.each do |collection_id|
       collection = @@db.get "collections:#{collection_id}:name"
-      images = @@db.lrange "collections:#{collection_id}:images", 0, -1
+      images = @@db.smembers "collections:#{collection_id}:images"
       puts "Indexing #{images.size} images for #{collection}"
       images.each do |image_id|
         image_path = "images:#{image_id}"
@@ -51,27 +51,15 @@ class Reader
     end
   end
 
-  def self.search(query,collections=nil)
-    if collections
-      collections = collections.to_a
-      c_ids = @@db.mget(collections.map { |name| "collections:#{name}:id" })
-    else
-      c_ids = @@db.lrange "global:collections", 0, -1
-      collections = @@db.mget(c_ids.map { |id| "collections:#{id}:name" })
-    end
-    results = {}
-    sets = query.tokenize_for_indexing.map{ |word|
+  def self.search(query,collection)
+    id = @@db.get "collections:#{collection}:id"
+    sets = query.tokenize.map { |word|
       "wordindex:#{Digest::MD5.hexdigest(word)}"
     }
-    files = @@db.sinter(*sets)
-
-    collections.zip(c_ids).each do |collection, id|
-      c_set = files & @@db.lrange("collections:#{id}:images", 0, -1)
-      results.merge!({collection => nil}) and break if c_set.empty?
-      c_set_data = @@db.mget(c_set.map { |id| "images:#{id}:basic_info" })
-      results.merge!({collection => c_set_data.compact})
-    end
-    return results
+    images = @@db.sinter("collections:#{id}:images", *sets).map { |id|
+      "images:#{id}:basic_info"
+    }
+    results = @@db.mget *images
   end
 end
 
@@ -83,7 +71,7 @@ class String
   # 5. Converts to array, splits between spaces (" ")
   # 6. Removes duplicates
   # 7. Removes words of less than 3 letters and members of STOP_WORDS
-  def tokenize_for_indexing
+  def tokenize
     self.strip.downcase.to_ascii_ugly.tr("^a-z0-9"," ").tr_s(" "," ").split(" ").uniq.delete_if { |word| (word.length < 3) or (STOP_WORDS.include? word) }
   end
 
