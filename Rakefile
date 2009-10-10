@@ -4,8 +4,12 @@
   require File.join(File.expand_path(File.dirname(__FILE__)), "lib", file)
 }
 
-Reader.database(RedisDB.connect)
-Loader.database(RedisDB.connect)
+begin
+  Reader.database(RedisDB.connect)
+  Loader.database(RedisDB.connect)
+rescue
+  # If the redis server is not started yet, there will be an error.
+end
 
 namespace :db do
   desc "Starts the redis server"
@@ -13,7 +17,7 @@ namespace :db do
     conf_file = File.join(File.expand_path(File.dirname(__FILE__)),"redis.conf")
     resp = `redis-server #{conf_file}`
     if resp.empty?
-      RedisDB.set "db:name", APP_NAME
+      RedisDB.connect.set "db:name", APP_NAME
       puts "Redis server started on port #{REDIS_PORT}."
     else
       puts "Redis server responded:\n#{resp}"
@@ -41,7 +45,7 @@ namespace :db do
 
   desc "Drops all the database content"
   task :drop do
-    puts "Redis database is now empty." if RedisDB.flushall
+    puts "Redis database is now empty." if RedisDB.connect.flushall
   end
 
   desc "Loads the database with all the available collections"
@@ -88,7 +92,7 @@ namespace :db do
 
   desc "Writes DB to disk."
   task :save do
-    RedisDB.save
+    RedisDB.connect.save
   end
 
   desc "Rebuilds the index from scratch"
