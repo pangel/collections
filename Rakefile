@@ -11,6 +11,17 @@ rescue
   # If the redis server is not started yet, there will be an error.
 end
 
+namespace :app do
+  task :deploy do
+    Dir.chdir '/var/www/vcs/collections/'
+    puts `git pull`
+    puts `git checkout-index -a -f --prefix=/var/www/collections.pangel.fr/`
+    Dir.chdir '/var/www/collections.pangel.fr'
+    puts `/etc/init.d/thin restart`
+    puts "Deploy complete"
+  end
+end
+
 namespace :db do
   desc "Starts the redis server"
   task :start do
