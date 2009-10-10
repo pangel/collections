@@ -74,7 +74,7 @@ namespace :db do
       end
     end
 
-    db = RedisDB
+    db = RedisDB.connect
 
     puts "You are now in irb. Database object is db"
     IRB.start_session(binding)
