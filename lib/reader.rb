@@ -59,7 +59,8 @@ class Reader
     images = @@db.sinter("collections:#{id}:images", *sets).map { |id|
       "images:#{id}:basic_info"
     }
-    results = @@db.mget *images
+    return images if images.empty?
+    return @@db.mget *images
   end
 end
 
