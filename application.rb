@@ -63,14 +63,51 @@ get '/stylesheets/style_panel.css' do
   sass :style_panel
 end
 
+get '/rss/:sources/:query' do
+  @query = params['query']
+  @sources = params['sources'].split(" ")
+
+  @results = @sources.reduce([]) do |acc,source|
+    acc + Reader.search(@query, source).map { |raw| build_image(raw) }
+  end
+
+  response["Content-Type"] = "text/xml; charset=utf-8"
+
+  x = Builder::XmlMarkup.new(:indent=>2)
+  x.instruct!
+  x << '<rss version="2.0" xmlns:media="http://search.yahoo.com/mrss"   xmlns:atom="http://www.w3.org/2005/Atom">'
+  x.channel {
+    x.title "UCLA Digital Collections Cooliris RSS feed"
+    x.language "en-US"
+    @results.each { |pic|
+      x.item {
+        x.title pic[:title]
+        x.link pic[:url]
+        x.media :thumbnail, {"url"=>pic[:thumb], "type" => "image/gif"}
+        x.media :content, {"url"=>pic[:fullres_url], "type" => "image/jpeg"}
+      }
+    }
+  }
+  x << '</rss>'
+
+end
+
 get '/' do
   @query = params["q"]
   @sources = params["s"] || ['latimes']
-  @format = params["f"]
+  @style = (params["st"].nil? or params["st"].empty?) ? "grid" : params["st"]
 
-  return haml(:search) if params["q"].nil? or params["q"].empty?
+  return haml(:search) if @query.nil? or @query.empty?
 
-  if params["st"] == "panel"
+  redirect "/#{@sources}/#{@query}/#{@style}"
+end
+
+get '/:sources/:query/:style' do
+  @query = params["query"]
+  @sources = params["sources"].to_a
+  @style = params["style"]
+
+  if @style == "panel"
     # Panel view does not sort the results by collection
     @results = @sources.reduce([]) do |acc,source|
       acc + Reader.search(@query, source).map { |raw| build_image(raw) }
@@ -85,45 +122,10 @@ get '/' do
     end
   end
 
-  case @format
-  when "xml"
-    response["Content-Type"] = "text/xml; charset=utf-8"
-    CollectionReader.xml(@results).to_s
-  when "yaml"
-    response["Content-type"] = "application/x-yaml; charset=utf-8"
-    @results.to_yaml
-  when "rss"
-    response["Content-Type"] = "text/xml; charset=utf-8"
-    @results = @sources.reduce([]) do |acc,source|
-      acc + Reader.search(@query, source).map { |raw| build_image(raw) }
-    end
+  @url_minus_style = "/#{@sources}/#{@query}"
 
-    x = Builder::XmlMarkup.new(:indent=>2)
-    x.instruct!
-    x << '<rss version="2.0" xmlns:media="http://search.yahoo.com/mrss"   xmlns:atom="http://www.w3.org/2005/Atom">'
-    x.channel {
-      x.title "UCLA Digital Collections Cooliris RSS feed"
-      x.language "en-US"
-      @results.each { |pic|
-        x.item {
-          x.title pic[:title]
-          x.link pic[:url]
-          x.media :thumbnail, {"url"=>pic[:thumb], "type" => "image/gif"}
-          x.media :content, {"url"=>pic[:fullres_url], "type" => "image/jpeg"}
-        }
-      }
-    }
-    x << '</rss>'
-  else
-    params_minus_style = request.params.reject { |k,v| k == "st"}
-    @url_minus_style = "#{request.path_info}?#{build_query(params_minus_style)}"
+  @rss_url = "/rss#{@url_minus_style}"
 
-    params_with_rss = request.params.merge({ "f" => "rss"})
-    @rss_url = "#{request.path_info}?#{build_query(params_with_rss)}"
-
-    @style = (params["st"] && !params["st"].empty?) ? params["st"] : "grid"
-
-    return haml(:noresults) if @results.empty?
-    return haml("view_#{@style}".to_sym)
-  end
+  return haml(:noresults) if @results.empty?
+  return haml("view_#{@style}".to_sym)
 end

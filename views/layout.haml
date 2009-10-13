@@ -30,7 +30,7 @@
             - if style == @style
               = style.capitalize
             - else
-              %a{:href => "#{@url_minus_style}&st=#{style}"}= style.capitalize
+              %a{:href => "#{@url_minus_style}/#{style}"}= style.capitalize
     = yield
     #bottom>
       %a{:href => "http://github.com/pangel/collections/issues"} Something wrong? Click here!
