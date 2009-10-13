@@ -1,4 +1,4 @@
-# These tasks rebuild the UCLADC's metadata and its index (for full-text search)
+require 'pp'
 
 %w(loader reader redisdb app_env).each { |file|
   require File.join(File.expand_path(File.dirname(__FILE__)), "lib", file)
@@ -10,7 +10,6 @@ begin
 rescue
   # If the redis server is not started yet, there will be an error.
 end
-
 namespace :app do
   task :deploy do
     Dir.chdir '/var/www/vcs/collections/'
@@ -114,6 +113,6 @@ namespace :db do
   desc "Runs a full text search using the given query"
   task :search, :query, :source do |t,args|
     source = args[:source] || "latimes"
-    puts Reader.search(args[:query], source)
+    pp Reader.search(args[:query], source)
   end
 end
