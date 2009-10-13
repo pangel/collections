@@ -52,6 +52,7 @@ class Reader
   end
 
   def self.search(query,collection)
+    raise "No such collection: #{collection}" unless @@db.get "collections:#{collection}:id"
     id = @@db.get "collections:#{collection}:id"
     sets = query.tokenize.map { |word|
       "wordindex:#{Digest::MD5.hexdigest(word)}"
