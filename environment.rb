@@ -1,5 +1,6 @@
 require 'yaml'
 require 'builder'
+require 'cgi'
 
 require 'rubygems'
 require 'haml'

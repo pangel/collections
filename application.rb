@@ -81,9 +81,10 @@ get '/rss/:sources/:query' do
     x.language "en-US"
     @results.each { |pic|
       x.item {
+        url = params['redirect'] ? '/img/' + CGI::escape(pic[:thumb]) : pic[:thumb]
         x.title pic[:title]
         x.link pic[:url]
-        x.media :thumbnail, {"url"=>pic[:thumb], "type" => "image/gif"}
+        x.media :thumbnail, {"url"=> url, "type" => "image/gif"}
         x.media :content, {"url"=>pic[:fullres_url], "type" => "image/jpeg"}
       }
     }
@@ -100,6 +101,10 @@ get '/' do
   return haml(:search) if @query.nil? or @query.empty?
 
   redirect "/#{@sources}/#{@query}/#{@style}"
+end
+
+get %r{/img/(.+)} do |url|
+   redirect CGI::unescape url
 end
 
 get '/:sources/:query/:style' do
@@ -125,6 +130,7 @@ get '/:sources/:query/:style' do
   @url_minus_style = "/#{@sources}/#{@query}"
 
   @rss_url = "/rss#{@url_minus_style}"
+  @rss_url += "?redirect=yes" if @style == "panel"
 
   return haml(:noresults) if @results.empty?
   return haml("view_#{@style}".to_sym)
