@@ -1,4 +1,3 @@
-require 'yaml'
 require 'builder'
 require 'cgi'
 
@@ -12,7 +11,6 @@ configure do
 
   # Load extensions
   $LOAD_PATH.unshift("#{File.dirname(__FILE__)}/lib")
-  # Dir.glob("#{File.dirname(__FILE__)}/lib/*.rb") { |lib| load File.basename(lib, '.*') }
   require "loader"
   require "reader"
   require "redisdb"

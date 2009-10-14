@@ -10,6 +10,7 @@ begin
 rescue
   # If the redis server is not started yet, there will be an error.
 end
+
 namespace :app do
   task :deploy do
     Dir.chdir '/var/www/vcs/collections/'
