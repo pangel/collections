@@ -115,7 +115,7 @@ $(document).ready(function() {
       if (big_img == this) {
         $(this).stop().shrink();
         $('#help-box').stop(true,false).fadeOut(500);
-        details.stop().animate({"right":"-340px","visibility":"hidden"});
+        details.stop().animate({"right":"-340px"});
 
         big_img = undefined;
       } else {
