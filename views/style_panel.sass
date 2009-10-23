@@ -216,17 +216,18 @@ a.filter-options
   width: 4100px
   clear: both
 
-  .imgcontainer
-    position: relative
-    width: 100px
-    height: 75px
-    float: left
-    margin: 0px 5px 5px 0px
-
   .imgblock
     margin-right: 105px
     float: left
-    width: auto
+    // Need to set width, otherwise IE7 clears the containing floats.
+    width: 525px
+
+    .imgcontainer
+      position: relative
+      width: 100px
+      height: 75px
+      float: left
+      margin: 0px 5px 5px 0px
 
   .nextline
     clear: both

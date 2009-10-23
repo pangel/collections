@@ -79,6 +79,11 @@ $(document).ready(function() {
   $('img').hover(
     function() {
       if (big_img != this) {
+        // Comment ref 001
+        // IE7 needs the following line
+        // See http://www.quirksmode.org/bugreports/archives/2006/01/Explorer_z_index_bug.html
+        $(this).parent().css("z-index", "2500");
+
         $(this).stop().css("z-index", "2500").animate({
           "width": "200px",
           "height":"150px",
@@ -94,6 +99,7 @@ $(document).ready(function() {
         // If I want to be able to call it at other places, in other times
         // Alternatively, see "jQuery custom animations"
         if (big_img != this) {
+          $(this).parent().css("z-index", "2"); // See comment #001
           $(this).stop().css("z-index","2").animate({
             "width": "100px",
             "height":"75px",
@@ -101,6 +107,7 @@ $(document).ready(function() {
             "marginTop":"0px"
           },
             750, function() {
+              $(this).parent().css("z-index", "1"); // See comment #001
               $(this).css("z-index", "1");
           });
         }
@@ -125,6 +132,7 @@ $(document).ready(function() {
         var margin_x = current_position.left - dest_position.left;
         var margin_y = current_position.top - dest_position.top;
 
+        $(this).parent().css("z-index", "3000"); // See comment #001
         $(this).stop().css("z-index","3000").animate({
           "width": "600px",
           "height": "450px",
