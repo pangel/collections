@@ -131,7 +131,7 @@ $(document).ready(function() {
 
       $('#tooltip').css({
         "top":event.pageY + 50,
-        "left": (event.pageX - window.scrollX > tooltip_half_width ? event.pageX - tooltip_half_width : window.scrollX) + 15
+        "left": (event.pageX > tooltip_half_width ? event.pageX - tooltip_half_width : 0) + 15
       });
     }
   );
