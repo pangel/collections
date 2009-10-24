@@ -100,17 +100,17 @@ get '/' do
 
   return haml(:search) if @query.nil? or @query.empty?
 
-  redirect "/#{@sources}/#{@query}/#{@style}"
+  redirect "/#{@sources}/#{@query}?#{build_query 'st' => @style}"
 end
 
 get %r{/img/(.+)} do |url|
    redirect CGI::unescape url
 end
 
-get '/:sources/:query/:style' do
+get '/:sources/:query' do
   @query = params["query"]
   @sources = params["sources"].to_a
-  @style = params["style"]
+  @style = params["st"]
 
   if @style == "panel"
     # Panel view does not sort the results by collection
