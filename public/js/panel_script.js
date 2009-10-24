@@ -166,7 +166,7 @@ $(document).ready(function() {
         $(this).stop().shrink();
         $('#help-box').stop(true,false).fadeOut(500);
         hide_details();
-        $('#tooltip').show();
+        show_tooltip();
         big_img = undefined;
       } else {
         var self = this
