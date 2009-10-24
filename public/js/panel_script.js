@@ -60,7 +60,7 @@ $(document).ready(function() {
   }
 
   function hide_details() {
-    $('#details').fadeOut();
+    $('#details').animate({"opacity":"0"},500);
   }
 
   function change_details(image_id) {
@@ -196,7 +196,7 @@ $(document).ready(function() {
 
 
             change_details(iid);
-            $('#details').fadeIn().css({'left':dest_position.left+'px', 'top':dest_position.top+(450-40-$('#details').height())+'px'});
+            $('#details').css({'display':'block','left':dest_position.left+'px', 'top':dest_position.top+(450-40-$('#details').height())+'px'}).stop().animate({"opacity":"0.8"},500);
           });
 
         if (big_img != undefined) {
@@ -206,7 +206,7 @@ $(document).ready(function() {
         big_img = this;
 
         hide_tooltip();
-
+        hide_details();
         var $block = $(this).parent().parent();
         var new_block_id = parseInt($block.attr('id').substring(1));
         var offset = $block.offset().left;
