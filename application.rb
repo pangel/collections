@@ -118,6 +118,8 @@ get '/:sources/:query/:style' do
       acc + Reader.search(@query, source).map { |raw| build_image(raw) }
     end
     @nresults = @results.size
+    @nbslices = nbslices(@nresults,20)
+    @details_store = "" # This string will contain the javascript code for the image's metadata.
   else
     @nresults = 0
     @results = @sources.reduce({}) do |acc,source|

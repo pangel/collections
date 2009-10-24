@@ -1,18 +1,16 @@
-- details_store = ""
-- nbslices = nbslices(@results.size,20)
 #blocksmenu
   %a{:href => "#", :id => "prev-block",
      :class => "block-menu", :title => "Go to previous block"}
   %a{:href => "#", :id => "next-block",
      :class => "block-menu", :title => "Go to next block"}
-  - nbslices.times do |i|
+  - @nbslices.times do |i|
     %a{:href => "#", :class => "block-menu block-selector", :id => "bs#{i}"}= "block #{i+1}"
 #document
   - @results.each_slice_with_index(20) do |result_slice,index|
     %div{:id => "b#{index}", :class => "imgblock"}
       - result_slice.each_with_index do |r,index2|
         - iid = "i#{index}#{index2}"
-        - details_store <<  "details_store.#{iid} = { title:'#{h(r[:title])}', collection:'#{h(r[:collection])}', collection_url:'#{h(r[:collection_url])}', url:'#{h(r[:url])}'};\n"
+        - @details_store <<  "details_store.#{iid} = { title:'#{h(r[:title])}', collection:'#{h(r[:collection])}', collection_url:'#{h(r[:collection_url])}', url:'#{h(r[:url])}'};\n"
         .imgcontainer{:id => iid}
           %img.thumb{:src => r[:thumb], :alt => r[:title]}
           -#%div.zindex z-index //DEVELOPMENT UTILITY
@@ -24,16 +22,3 @@
     In
     %a Image collection
   %a#imglink Link to image
-:javascript
-      $(document).ready(function() {
-
-        // The number of blocks in the page, minus 1, since indexes start at 0.
-        max_block_id = #{nbslices-1};
-
-        // Set the width of the container #document so the image blocks do not overflow
-        var document_width = #{nbslices} * (525 + 105)
-        $('#document').css({'width':document_width});
-
-        // Results' metadata
-        #{details_store}
-      });
