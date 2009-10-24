@@ -82,10 +82,11 @@ get '/rss/:sources/:query' do
     @results.each { |pic|
       x.item {
         url = params['redirect'] ? '/img/' + CGI::escape(pic[:thumb]) : pic[:thumb]
+        fullres_url = params['redirect'] ? '/img/' + CGI::escape(pic[:fullres_url]) : pic[:fullres_url]
         x.title pic[:title]
         x.link pic[:url]
         x.media :thumbnail, {"url"=> url, "type" => "image/gif"}
-        x.media :content, {"url"=>pic[:fullres_url], "type" => "image/jpeg"}
+        x.media :content, {"url"=>fullres_url, "type" => "image/jpeg"}
       }
     }
   }

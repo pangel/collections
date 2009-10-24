@@ -26,6 +26,9 @@ $(document).ready(function() {
   // A container for every image's metadata
   details_store = {};
 
+  // We pre-store the width of the tooltip. Too bad if text size changes.
+  var tooltip_half_width = $('#tooltip').width()/2;
+
   // Browsers handle window scrolling differently.
   // Chrome and Safari use <body>, while Opera, FF and IE use <html>
   // Warning: this doesn't seem to be future-proof. $.browser.safari might return false for Chrome some day.
@@ -43,6 +46,60 @@ $(document).ready(function() {
     });
   };
 
+  function show_tooltip() {
+    $('#tooltip').css({"display":"block"}).stop().animate({"opacity":"0.8"},500);
+  }
+
+  function hide_tooltip() {
+    $('#tooltip').stop().animate({"opacity":"0"},500,function(){ $(this).css({"display":"none"});});
+  }
+
+  // Updates the markup showing current image's details
+  function change_tooltip(image_id) {
+    $('#tooltip-title').text(details_store[image_id].title);
+  }
+
+  function hide_details() {
+    $('#details').fadeOut();
+  }
+
+  function change_details(image_id) {
+    $('#details-title', '').text(details_store[image_id].title);
+    $('#details-collection a').attr('href', details_store[image_id].url).text(details_store[image_id].collection);
+    $('#details-collection').show();
+  }
+
+  function widen(image) {
+    // Comment ref 001
+    // IE7 needs the following line
+    // See http://www.quirksmode.org/bugreports/archives/2006/01/Explorer_z_index_bug.html
+    $(image).parent().css("z-index", "2500");
+
+    $(image).stop().css("z-index", "2500").animate({
+      "width": "200px",
+      "height":"150px",
+      "marginLeft":"-50px",
+      "marginTop":"-37px"
+      },
+      750
+    );
+  }
+
+  function smallen(image) {
+    $(image).parent().css("z-index", "2");
+    $(image).stop().css("z-index","2").animate({
+      "width": "100px",
+      "height":"75px",
+      "marginLeft":"0px",
+      "marginTop":"0px"
+    },
+      750, function() {
+        $(this).parent().css("z-index", "1");
+        $(this).css("z-index", "1");
+    });
+
+  }
+
   // The image currently enlarged.
   var big_img;
 
@@ -50,13 +107,6 @@ $(document).ready(function() {
 
   // The id of the block currently clicked.
   var current_block_id = 0;
-
-  // Updates the markup showing current image's details
-  function show_details(image_id) {
-    $('#imgtitle').text(details_store[image_id].title);
-    $('#imgcol a').attr('href', details_store[image_id].collection_url).text(details_store[image_id].collection);
-    $('#imglink').attr('href', details_store[image_id].url);
-  }
 
   // Go from current_block_id to new_block_id
   // offset argument is optional; the caller might include it if it has a faster way to compute it.
@@ -76,56 +126,56 @@ $(document).ready(function() {
   // Special info box to help the user who enlarged a picture
   $('body').append('<div id="help-box">Click again to shrink the image.</div>')
 
+  $().mousemove(
+    function(event) {
+
+      $('#tooltip').css({
+        "top":event.pageY + 50,
+        "left": (event.pageX - window.scrollX > tooltip_half_width ? event.pageX - tooltip_half_width : window.scrollX) + 15
+      });
+    }
+  );
+
+  $('.imgblock').mouseleave(
+    function(event) {
+      hide_tooltip();
+    }
+  );
+
   $('img').hover(
     function() {
       if (big_img != this) {
-        // Comment ref 001
-        // IE7 needs the following line
-        // See http://www.quirksmode.org/bugreports/archives/2006/01/Explorer_z_index_bug.html
-        $(this).parent().css("z-index", "2500");
-
-        $(this).stop().css("z-index", "2500").animate({
-          "width": "200px",
-          "height":"150px",
-          "marginLeft":"-50px",
-          "marginTop":"-37px"
-          },
-          750
-        );
+        change_tooltip($(this).parent().attr('id'));
+        show_tooltip();
+        widen(this);
+      } else {
+        hide_tooltip();
       }
     },
     function() {
-        // Will need to wrap this into a jQuery.fn.extend(..)
-        // If I want to be able to call it at other places, in other times
-        // Alternatively, see "jQuery custom animations"
         if (big_img != this) {
-          $(this).parent().css("z-index", "2"); // See comment #001
-          $(this).stop().css("z-index","2").animate({
-            "width": "100px",
-            "height":"75px",
-            "marginLeft":"0px",
-            "marginTop":"0px"
-          },
-            750, function() {
-              $(this).parent().css("z-index", "1"); // See comment #001
-              $(this).css("z-index", "1");
-          });
+          smallen(this);
         }
       }
     );
 
   $('img').click(
     function() {
-      // Save the div to avoid multiple DOM lookups.
-      var details = $("#details", document);
-
+      var iid = $(this).parent().attr('id');
       if (big_img == this) {
         $(this).stop().shrink();
         $('#help-box').stop(true,false).fadeOut(500);
-        details.stop().animate({"right":"-340px"});
-
+        hide_details();
+        $('#tooltip').show();
         big_img = undefined;
       } else {
+        var self = this
+        var image = new Image();
+        $(image).load(function() {
+          $(self).attr('src',details_store[iid].fullres_url);
+        });
+        image.src = details_store[iid].fullres_url;
+
         var current_position = $(this).offset();
         var dest_position = $(this).parent().parent().offset();
 
@@ -143,8 +193,11 @@ $(document).ready(function() {
             $('#help-box').css({
               'left':dest_position.left+"px",
               'top':dest_position.top+450+'px'}).pause(200).fadeIn(2000).pause(8000).fadeOut(1000);
-            }
-          );
+
+
+            change_details(iid);
+            $('#details').fadeIn().css({'left':dest_position.left+'px', 'top':dest_position.top+(450-40-$('#details').height())+'px'});
+          });
 
         if (big_img != undefined) {
           $(big_img).shrink();
@@ -152,18 +205,7 @@ $(document).ready(function() {
 
         big_img = this;
 
-        iid = $(this).parent().attr('id');
-
-        if(details.css("right") == "-340px") {
-          show_details(iid);
-          details.css("visibility", "visible")
-          details.animate({"right":"0"});
-
-        } else {
-          details.find('p').hide();
-          show_details(iid);
-          details.find('p').fadeIn(750);
-        }
+        hide_tooltip();
 
         var $block = $(this).parent().parent();
         var new_block_id = parseInt($block.attr('id').substring(1));

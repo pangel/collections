@@ -245,35 +245,64 @@ a.filter-options
     height: 150px
     border-width: 0px 10px 10px 0px
 
-
-#details
-  visibility: hidden
-  position: fixed
-  right: -340px
-  top: 0px
-  height: 100%
-  width: 300px
-  background: #CCCCCC
+#tooltip
+  position: absolute
+  height: auto
+  width: 30em
+  color: white
+  background: #000
   filter: alpha(opacity=80)
   -moz-opacity: 0.8
   -khtml-opacity: 0.8
   opacity: 0.8
-  padding: 80px 20px 10px 20px
+  -moz-border-radius: 15px
+  -webkit-border-radius: 15px
+  border-radius: 15px
+  padding: 1em
   z-index: 99999
 
   p
     font-size: 0.8em
     line-height: 1.2
-    margin-bottom: 1em
+    margin-bottom: 0
 
-    &#imgtitle
-      font-weight: bold
+#details
+  position: absolute
+  display: none
+  color: white
+  background: black
+  width: 560px
+  -moz-opacity: 0.8
+  -khtml-opacity: 0.8
+  opacity: 0.8
+  z-index: 99999
+  font-size: 0.8em
+  padding: 20px
 
-  a#imglink
+  #details-title
+    font-weight: bold
+
+  #details-collection
+    margin-top: 1em
+
+    a
+      background: white
+      color: black
+      padding: 3px
+      border: 2px solid black
+      text-decoration: none
+      &:hover
+        border-color: white
+        color: white
+        background: black
+
+  a#details-link
     display: block
     padding-top: 1.3em
     font-size: 0.6em
 
+  #details-collection, #details-description, #details-link
+    display: none
 
 #help-box
   position: absolute

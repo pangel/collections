@@ -10,15 +10,17 @@
     %div{:id => "b#{index}", :class => "imgblock"}
       - result_slice.each_with_index do |r,index2|
         - iid = "i#{index}#{index2}"
-        - @details_store <<  "details_store.#{iid} = { title:'#{h(r[:title])}', collection:'#{h(r[:collection])}', collection_url:'#{h(r[:collection_url])}', url:'#{h(r[:url])}'};\n"
+        - @details_store <<  "details_store.#{iid} = { title:'#{h(r[:title])}', collection:'#{h(r[:collection])}', collection_url:'#{h(r[:collection_url])}', url:'#{h(r[:url])}', fullres_url:'#{h(r[:fullres_url])}'};\n"
         .imgcontainer{:id => iid}
           %img.thumb{:src => r[:thumb], :alt => r[:title]}
           -#%div.zindex z-index //DEVELOPMENT UTILITY
         - if (index2+1) % 5 == 0
           %hr.nextline
+#tooltip
+  %p#tooltip-title Image title
+
 #details
-  %p#imgtitle Image title
-  %p#imgcol
+  %p#details-title Image title
+  %p#details-collection
     In
     %a Image collection
-  %a#imglink Link to image
