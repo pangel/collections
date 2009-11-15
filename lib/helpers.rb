@@ -9,4 +9,57 @@ module Helpers
      ''
     end
   end
+
+  def partial(name, options={})
+    haml "_#{name}".to_sym, options.merge(:layout => false)
+  end
+
+  def normalize(results)
+    results.map do |e|
+      collection = COLLECTIONS[e["projectId"]]
+      {
+        :title          => hj(e["title"]),
+        :collection     => hj(collection["name"]),
+        :collection_url => hj(collection["url"]),
+        :url            => hj("http://digital2.library.ucla.edu/viewItem.do?ark=" + e["ark"]),
+        :fullres_url    => hj("http://digital2.library.ucla.edu/imageResize.do?scaleFactor=1&contentFileId=" + e["submasterFileId"]),
+        :thumb          => hj(e["thumbnailURL"])
+      }
+    end
+  end
+
+  def in_sources?(source_id)
+    if @sources
+      @sources.include? source_id
+    else
+      false
+    end
+  end
+
+  def filtering_options
+    Options
+  end
+
+  def search(query,sources)
+    # HTTParty's URI params normalizer does not allow repetition of a parameter, so we use our own.
+    params = sources.map { |s| "selectedProjects=#{s}" }
+    params  << "keyWord=#{CGI::escape(query)}"
+    response = HTTParty.get "http://digital2.library.ucla.edu/testAjax.do", :query => params.join('&'), :format => :json
+    normalize response
+  end
+
+  # Returns the ceiling of the division of q by d
+  # Using float is not precise enough
+  def nbslices(q,d)
+    divmod = q.divmod(d)
+    divmod[0] + (divmod[1] > 0 ? 1 : 0)
+  end
+
+  class Array
+    def each_slice_with_index(slice_size)
+      self.enum_slice(slice_size).each_with_index { |slice,index|
+        yield slice,index
+      }
+    end
+  end
 end
