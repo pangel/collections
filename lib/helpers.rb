@@ -1,3 +1,11 @@
+class Array
+  def each_slice_with_index(slice_size)
+    self.enum_slice(slice_size).each_with_index { |slice,index|
+      yield slice,index
+    }
+  end
+end
+
 module Helpers
   # From http://rails.rubyonrails.org/classes/ActionView/Helpers/JavaScriptHelper.html#M000440
   JS_ESCAPE_MAP = { '\\' => '\\\\', '</' => '<\/', "\r\n" => '\n', "\n" => '\n', "\r" => '\n', '"' => '\\"', "'" => "\\'" }
@@ -53,13 +61,5 @@ module Helpers
   def nbslices(q,d)
     divmod = q.divmod(d)
     divmod[0] + (divmod[1] > 0 ? 1 : 0)
-  end
-
-  class Array
-    def each_slice_with_index(slice_size)
-      self.enum_slice(slice_size).each_with_index { |slice,index|
-        yield slice,index
-      }
-    end
   end
 end

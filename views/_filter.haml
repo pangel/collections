@@ -8,7 +8,7 @@
           - items.each do |id,attrs|
             %ul
               %li
-                %input{:type => "checkbox", :id => id, :name => "s", :value => id, :checked => in_sources?(id.to_s)}
+                %input{:type => "checkbox", :id => id, :name => "s-#{id}", :value => id, :checked => in_sources?(id.to_s)}
                 %label{:for => id}= attrs["name"]
       .selector-actions
         %button#submit-search Search
