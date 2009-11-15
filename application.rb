@@ -1,31 +1,59 @@
 require 'sinatra'
 require 'environment'
+require 'lib/helpers'
 
 configure do
   set :views, "#{File.dirname(__FILE__)}/views"
 
-  # FIXME Might cause concurrency issues when multiple instances of the app are running.
-  DB = RedisDB.connect
-  Reader.database(DB)
+  COLLECTIONS = YAML.load_file("collections.yaml")
+
   Option = Struct.new :type, :display, :items
   Options = Array.new
-  Options << Option.new('collection', "Select other sources", { "History" => [["latimes", "LA Times photograph archive"]] })
+  Options << Option.new('collection', "Select other sources", COLLECTIONS.group_by { |k,v| v["category"] })
 end
 
 helpers do
   include Rack::Utils
+  include Helpers
   alias_method :h, :escape_html
+  alias_method :hj, :escape_javascript
 
   def partial(name, options={})
     haml "_#{name}".to_sym, options.merge(:layout => false)
   end
 
-  def sources_display
-    (@sources.to_a == ["latimes"] or @sources.nil?) ? "all collections" : @sources.join(', ')
+  def normalize(results)
+    results.map do |e|
+      collection = COLLECTIONS[e["projectId"]]
+      {
+        :title          => hj(e["title"]),
+        :collection     => hj(collection["name"]),
+        :collection_url => hj(collection["url"]),
+        :url            => hj("http://digital2.library.ucla.edu/viewItem.do?ark=" + e["ark"]),
+        :fullres_url    => hj("http://digital2.library.ucla.edu/imageResize.do?scaleFactor=1&contentFileId=" + e["submasterFileId"]),
+        :thumb          => hj(e["thumbnailURL"])
+      }
+    end
+  end
+
+  def in_sources?(source_id)
+    if @sources
+      @sources.include? source_id
+    else
+      false
+    end
   end
 
   def filtering_options
     Options
+  end
+
+  def search(query,sources)
+    # HTTParty's URI params normalizer does not allow repetition of a parameter, so we use our own.
+    params = sources.map { |s| "selectedProjects=#{s}" }
+    params  << "keyWord=#{CGI::escape(query)}"
+    response = HTTParty.get "http://digital2.library.ucla.edu/testAjax.do", :query => params.join('&'), :format => :json
+    normalize response
   end
 
   # Returns the ceiling of the division of q by d
@@ -41,13 +69,6 @@ helpers do
         yield slice,index
       }
     end
-  end
-
-  def build_image(raw)
-    raw = raw.split("|")
-    collection = DB.get "collections:#{raw[0]}:name"
-    collection_url =DB.get "collections:#{raw[0]}:url}"
-    {:collection => collection, :collection_url => collection_url, :title => raw[1], :thumb => raw[2], :url => raw[4], :fullres_url => raw[3]}
   end
 end
 
@@ -65,14 +86,10 @@ end
 
 get '/rss/:sources/:query' do
   @query = params['query']
-  @sources = params['sources'].split(" ")
-
-  @results = @sources.reduce([]) do |acc,source|
-    acc + Reader.search(@query, source).map { |raw| build_image(raw) }
-  end
+  @sources = params['sources'].split(' ')
+  @results = search @query, @sources
 
   response["Content-Type"] = "text/xml; charset=utf-8"
-
   x = Builder::XmlMarkup.new(:indent=>2)
   x.instruct!
   x << '<rss version="2.0" xmlns:media="http://search.yahoo.com/mrss"   xmlns:atom="http://www.w3.org/2005/Atom">'
@@ -96,12 +113,11 @@ end
 
 get '/' do
   @query = params["q"]
-  @sources = params["s"] || ['latimes']
-  @style = (params["st"].nil? or params["st"].empty?) ? "grid" : params["st"]
+  @sources = params["s"]
 
-  return haml(:search) if @query.nil? or @query.empty?
+  return haml(:search) if @query.nil? or @query.empty? or @sources.nil? or @sources.empty?
 
-  redirect "/#{@sources}/#{@query}?#{build_query 'st' => @style}"
+  redirect "/#{@sources.join('+')}/#{ @query}"
 end
 
 get %r{/img/(.+)} do |url|
@@ -110,31 +126,16 @@ end
 
 get '/:sources/:query' do
   @query = params["query"]
-  @sources = params["sources"].to_a
-  @style = params["st"]
-
-  if @style == "panel"
-    # Panel view does not sort the results by collection
-    @results = @sources.reduce([]) do |acc,source|
-      acc + Reader.search(@query, source).map { |raw| build_image(raw) }
-    end
-    @nresults = @results.size
-    @nbslices = nbslices(@nresults,20)
-    @details_store = "" # This string will contain the javascript code for the image's metadata.
-  else
-    @nresults = 0
-    @results = @sources.reduce({}) do |acc,source|
-      images = Reader.search(@query, source).map { |raw| build_image(raw) }
-      @nresults += images.size
-      acc.merge source => images
-    end
-  end
-
-  @url_minus_style = "/#{@sources}/#{@query}"
-
-  @rss_url = "/rss#{@url_minus_style}"
-  @rss_url += "?redirect=yes" if @style == "panel"
+  @sources = params["sources"].split(' ')
+  @results = search @query, @sources
 
   return haml(:noresults) if @results.empty?
-  return haml("view_#{@style}".to_sym)
+
+  @nresults = @results.size
+  @nbslices = nbslices(@nresults,20)
+  @details_store = "" # This string will contain the javascript code for the image's metadata.
+
+  @rss_url = "/rss/#{@sources.join('+')}/#{CGI::escape @query}?redirect=yes"
+
+  return haml(:view_panel)
 end

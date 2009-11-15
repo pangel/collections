@@ -1,8 +1,10 @@
 require 'builder'
 require 'cgi'
+require 'yaml'
 
 require 'rubygems'
 require 'haml'
+require "httparty"
 require 'sinatra' unless defined?(Sinatra)
 
 configure do
