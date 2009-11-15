@@ -49,9 +49,6 @@ $(document).ready(function() {
     
     var format = $("form#search select[name='f'] option[selected]").attr('value');
     $("input[name='f']").val(format);
-    
-    var style = $("form#search input[name='st']").attr('value');
-    $("input[name='st']").attr('st',style);
   }); 
   
 });
