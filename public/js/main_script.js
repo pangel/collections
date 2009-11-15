@@ -28,6 +28,11 @@ $(document).ready(function() {
     }
   });
 
+  $('#submit-search').click(function() {
+    $('form#search').submit();
+    return false;
+  });
+
   $('#select-all').click(function() {
     $('li input').attr('checked',true);
     return false;

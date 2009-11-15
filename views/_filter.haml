@@ -11,7 +11,7 @@
                 %input{:type => "checkbox", :id => id, :name => "s", :value => id, :checked => in_sources?(id.to_s)}
                 %label{:for => id}= attrs["name"]
       .selector-actions
-        %button#search Search
+        %button#submit-search Search
         %button#select-all Select all
         %button#reset Reset
         %a#close-collection-selector{:href => "#"} Close
