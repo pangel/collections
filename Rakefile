@@ -4,9 +4,10 @@ require 'pp'
   require File.join(File.expand_path(File.dirname(__FILE__)), "lib", file)
 }
 
+# No need for Redis anymore, but keep in case we start caching later.
 begin
-  Reader.database(RedisDB.connect)
-  Loader.database(RedisDB.connect)
+  # Reader.database(RedisDB.connect)
+  # Loader.database(RedisDB.connect)
 rescue
   # If the redis server is not started yet, there will be an error.
 end
