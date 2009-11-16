@@ -1,5 +1,8 @@
-require 'sinatra'
-require 'environment'
+# Use bundled gems
+require 'vendor/gems/environment'
+Bundler.require_env
+
+require 'environment_local'
 require 'lib/helpers'
 
 configure do
@@ -10,6 +13,8 @@ configure do
   Option = Struct.new :type, :display, :items
   Options = Array.new
   Options << Option.new('collection', "Select other sources", COLLECTIONS.group_by { |k,v| v["category"] })
+  
+  puts "READY"
 end
 
 helpers do
@@ -44,6 +49,13 @@ get '/rss/:sources/:query' do
   }
   x << '</rss>'
 
+end
+
+get '/salut' do
+  "NON NON NON"
+  puts options.static
+  puts options.root
+  puts options.public
 end
 
 get '/' do
