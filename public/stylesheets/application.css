@@ -88,10 +88,10 @@ a.filter-options { font-variant: small-caps; }
 #menu a.block-selected:hover { background: #9B9B9B; }
 
 #blocksmenu #prev-block, #blocksmenu #next-block { padding: 0em; margin-top: 1.4em; width: 28px; height: 21px; }
-#blocksmenu #prev-block { background-image: url(/images/prev-block-off.gif); margin-left: 15px; }
-#blocksmenu #prev-block:hover { background-image: url(/images/prev-block-on.gif); }
-#blocksmenu #next-block { background-image: url(/images/next-block-off.gif); margin-right: 3em; }
-#blocksmenu #next-block:hover { background-image: url(/images/next-block-on.gif); }
+#blocksmenu #prev-block { background-image: url(../images/prev-block-off.gif); margin-left: 15px; }
+#blocksmenu #prev-block:hover { background-image: url(../images/prev-block-on.gif); }
+#blocksmenu #next-block { background-image: url(../images/next-block-off.gif); margin-right: 3em; }
+#blocksmenu #next-block:hover { background-image: url(../images/next-block-on.gif); }
 
 #document { margin-left: 25px; width: 4100px; clear: both; }
 #document .imgblock { margin-right: 105px; float: left; width: 525px; }
