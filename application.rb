@@ -64,7 +64,7 @@ get '/' do
   @sources = params["s"]
   return haml(:search) if @query.nil? or @query.empty? or @sources.nil? or @sources.empty?
 
-  redirect "/#{@sources.join('+')}/#{ @query}"
+  redirect "#{request.script_name}/#{@sources.join('+')}/#{ @query}"
 end
 
 get %r{/img/(.+)} do |url|
