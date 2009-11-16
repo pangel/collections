@@ -49,9 +49,7 @@ end
 get '/' do
   @query = params["q"]
 
-  # e.g. &s-1=1&s-34=34&s-41=41 => ["1", "34", "41"]
-  @sources = params.find_all { |k,v| k =~ /s-/ }.map { |k2,v2| v2 }
-
+  @sources = params["s"]
   return haml(:search) if @query.nil? or @query.empty? or @sources.nil? or @sources.empty?
 
   redirect "/#{@sources.join('+')}/#{ @query}"
