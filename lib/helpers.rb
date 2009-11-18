@@ -54,7 +54,11 @@ module Helpers
     # HTTParty's URI params normalizer does not allow repetition of a parameter, so we use our own.
     params = sources.map { |s| "selectedProjects=#{s}" }
     params  << "keyWord=#{CGI::escape(query)}"
-    response = HTTParty.get "http://digital2.library.ucla.edu/testAjax.do", :query => params.join('&'), :format => :json
+    begin
+      response = HTTParty.get "http://digital2.library.ucla.edu/testAjax.do", :query => params.join('&'), :format => :json
+    rescue Crack::ParseError
+      return []
+    end
     normalize response
   end
 
