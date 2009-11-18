@@ -23,7 +23,9 @@ module Helpers
   end
 
   def normalize(results)
-    results.map do |e|
+    results.reject { |d|
+      d["submasterFileId"].nil?
+    }.map { |e|
       collection = COLLECTIONS[e["projectId"]]
       {
         :title          => hj(e["title"]),
@@ -33,7 +35,7 @@ module Helpers
         :fullres_url    => hj("http://digital2.library.ucla.edu/imageResize.do?scaleFactor=1&contentFileId=" + e["submasterFileId"]),
         :thumb          => hj(e["thumbnailURL"])
       }
-    end
+    }
   end
 
   def in_sources?(source_id)
