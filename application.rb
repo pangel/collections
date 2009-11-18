@@ -58,7 +58,7 @@ get '/salut' do
   puts options.public
 end
 
-get '/' do
+get '/?' do
   @query = params["q"]
 
   @sources = params["s"]
