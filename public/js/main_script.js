@@ -42,13 +42,46 @@ $(document).ready(function() {
     $('li input').attr('checked',false);
     return false;
   });
-  
+
   $('form.selector').submit(function() {
     var query = $("form#search input[name='q']").attr('value');
     $("input[name='q']").val(query);
-    
+
     var format = $("form#search select[name='f'] option[selected]").attr('value');
     $("input[name='f']").val(format);
-  }); 
-  
+  });
+
+  // From http://lite.piclens.com/current/piclens.js
+  function hasCooliris() {
+		var clientExists = false;
+		if (window.piclens && window.piclens.launch) {
+			clientExists = true;
+		} else {
+			var context = null;
+			if (typeof PicLensContext != 'undefined') { // Firefox
+				context = new PicLensContext();
+			} else {									
+				try {
+					context = new ActiveXObject("PicLens.Context"); // IE
+				} catch (e) {
+					if (navigator.mimeTypes['application/x-cooliris']) { // Safari
+						context = document.createElement('object');
+						context.style.height="0px";
+						context.style.width="0px";
+						context.type = 'application/x-cooliris';
+						document.documentElement.appendChild(context);
+					} else {
+						context = null;
+					}
+				}
+			}
+			
+			this.PLC = context;
+			if (context) {
+				clientExists = true;
+			}
+		}
+    return clientExists;
+  }
+  if (!hasCooliris()) { alert ("You can install Cooliris you know :-)"); }
 });
