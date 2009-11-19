@@ -51,13 +51,6 @@ get '/rss/:sources/:query' do
 
 end
 
-get '/salut' do
-  "NON NON NON"
-  puts options.static
-  puts options.root
-  puts options.public
-end
-
 get '/?' do
   @query = params["q"]
 
