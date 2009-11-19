@@ -12,9 +12,7 @@ configure do
 
   Option = Struct.new :type, :display, :items
   Options = Array.new
-  Options << Option.new('collection', "Select other sources", COLLECTIONS.group_by { |k,v| v["category"] })
-  
-  puts "READY"
+  Options << Option.new('collection', "Select other sources", Class.new.extend(Helpers).load_collection_list)
 end
 
 helpers do

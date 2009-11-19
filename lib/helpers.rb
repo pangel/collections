@@ -46,6 +46,14 @@ module Helpers
     end
   end
 
+  def load_collection_list
+    categories = YAML.load_file File.join(File.dirname(__FILE__), "../categories.yaml")
+    collections = YAML.load_file File.join(File.dirname(__FILE__), "../collections.yaml")
+    categories.merge(categories) { |key,old,new|
+      new.inject({}) { |acc,id| acc.merge(id => collections[id]) }
+    }
+  end
+
   def filtering_options
     Options
   end
