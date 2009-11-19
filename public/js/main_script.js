@@ -83,5 +83,5 @@ $(document).ready(function() {
 		}
     return clientExists;
   }
-  if (!hasCooliris()) { alert ("You can install Cooliris you know :-)"); }
+  //if (!hasCooliris()) { alert ("You can install Cooliris you know :-)"); }
 });
