@@ -151,12 +151,18 @@ a
   float: left
   padding: 1em
 
+  &:hover
+    background-color: #B3B3B3
+
   p.selector-title
     font-variant: small-caps
     text-transform: uppercase
     margin-bottom: 0.8em
     font-size: 1.1em
     font-weight: bold
+
+  ul
+    display: none
 
   li
     border-top: 1px dashed #666666
@@ -252,18 +258,18 @@ a.filter-options
     height: 21px
 
   #prev-block
-    background-image: url(/images/prev-block-off.gif)
+    background-image: url(../images/prev-block-off.gif)
     margin-left: 15px
 
     &:hover
-      background-image: url(/images/prev-block-on.gif)
+      background-image: url(../images/prev-block-on.gif)
 
   #next-block
-    background-image: url(/images/next-block-off.gif)
+    background-image: url(../images/next-block-off.gif)
     margin-right: 3em
 
     &:hover
-      background-image: url(/images/next-block-on.gif)
+      background-image: url(../images/next-block-on.gif)
 
 
 #document

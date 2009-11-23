@@ -18,6 +18,19 @@ $(document).ready(function() {
     $(selector_id).css({"visibility":"hidden"});
   });
 
+  // Activate all sources of a category when that category is clicked on.
+  $('.selector-column').click(function () {
+    if ($(this).attr('enabled') === 'true') {
+      $(this).css('background-color', '#fff');
+      $('input',this).attr('checked',false);
+      $(this).attr('enabled','false');
+    } else {
+      $(this).css('background-color', '#ddd');
+      $('input',this).attr('checked',true);
+      $(this).attr('enabled','true');
+    }
+  });
+
   // Hides a selector if the user clicks outside of it
   $(document).click(function(e) {
     // Checks whether a selector is among the parents of the clicked element.
