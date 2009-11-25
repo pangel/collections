@@ -4,7 +4,8 @@
   %a{:href => "#", :id => "next-block",
      :class => "block-menu", :title => "Go to next block"}
   - @nbslices.times do |i|
-    %a{:href => "#", :class => "block-menu block-selector", :id => "bs#{i}"}= "block #{i+1}"
+    %a{:href => "#", :class => "block-menu block-selector", :id => "bs#{i}"}
+      %span= "#{i+1}"
 #document
   - @results.each_slice_with_index(20) do |result_slice,index|
     %div{:id => "b#{index}", :class => "imgblock"}
@@ -24,3 +25,5 @@
   %p#details-collection
     In
     %a Image collection
+%img#details-image{:src => ""}
+%img#details-image-back{:src => ""}

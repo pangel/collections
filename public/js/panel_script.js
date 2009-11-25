@@ -1,15 +1,11 @@
 $(document).ready(function() {
-
+  
   // Initialize the appearance of block-selector 0
   $('.block-selector').eq(0).toggleClass('block-selected',true);
 
-  // The panels display requires the menu to be fixed
-  $("#menu-wrapper, #blocksmenu").css("position","fixed");
 
   // Offsets the blocks&images so that it doesn't overlap with the fixed menu.
   // If the height of the menu was known, a static css properly would work.
-  $('#blocksmenu').css({'margin-top':$('#menu-wrapper').height()});
-  $('#document').css({'padding-top':$('#menu-wrapper').height()+$('#blocksmenu').innerHeight()+'px'});
 
   // Animation for putting an image back to normal state
   $.fn.extend({
@@ -28,6 +24,9 @@ $(document).ready(function() {
 
   // We pre-store the width of the tooltip. Too bad if text size changes.
   var tooltip_half_width = $('#tooltip').width()/2;
+
+  // Pointer to the container for full-resolutions images
+  var details_image = $('#details-image');
 
   // Browsers handle window scrolling differently.
   // Chrome and Safari use <body>, while Opera, FF and IE use <html>
@@ -66,12 +65,11 @@ $(document).ready(function() {
   function change_details(image_id) {
     $('#details-title', '').text(details_store[image_id].title);
     $('#details-collection a').attr('href', details_store[image_id].url).text(details_store[image_id].collection);
-    $('#details-collection').show();
+    $('#details-collection, #details-title').show();
   }
 
   function widen(image) {
     // Comment ref 001
-    // IE7 needs the following line
     // See http://www.quirksmode.org/bugreports/archives/2006/01/Explorer_z_index_bug.html
     $(image).parent().css("z-index", "2500");
 
@@ -114,8 +112,8 @@ $(document).ready(function() {
     new_block_id = parseInt(new_block_id);
 
     if (new_block_id != current_block_id) {
-      var offset = offset || $('.imgblock').eq(new_block_id).offset().left;
-      $(scrollable).stop().animate({scrollLeft: offset-25}, 500);
+      var offset = offset || $('.imgblock').eq(new_block_id).offset().top;
+      $(scrollable).stop().animate({scrollTop: offset-25}, 500);
 
       $('.block-selector').eq(current_block_id).toggleClass('block-selected',false);
       current_block_id = new_block_id;
@@ -142,7 +140,7 @@ $(document).ready(function() {
     }
   );
 
-  $('img').hover(
+  $('#document img').hover(
     function() {
       if (big_img != this) {
         change_tooltip($(this).parent().attr('id'));
@@ -159,57 +157,33 @@ $(document).ready(function() {
       }
     );
 
-  $('img').click(
+  $('#document img').click(
     function() {
       var iid = $(this).parent().attr('id');
-      if (big_img == this) {
+      
+      if (details_image.attr('src') === $(this).attr('src')) {
         $(this).stop().shrink();
-        $('#help-box').stop(true,false).fadeOut(500);
-        hide_details();
-        show_tooltip();
-        big_img = undefined;
       } else {
-        var self = this
-        var image = new Image();
-        $(image).load(function() {
-          $(self).attr('src',details_store[iid].fullres_url);
+        crossfade_details_image($(this).attr('src'), function() {
+          crossfade_details_image(details_store[iid].fullres_url);
         });
-        image.src = details_store[iid].fullres_url;
+        
+        change_details(iid);
 
-        var current_position = $(this).offset();
-        var dest_position = $(this).parent().parent().offset();
-
-        var margin_x = current_position.left - dest_position.left;
-        var margin_y = current_position.top - dest_position.top;
-
-        $(this).parent().css("z-index", "3000"); // See comment #001
-        $(this).stop().css("z-index","3000").animate({
-          "width": "600px",
-          "height": "450px",
-          "marginTop":"-="+margin_y,
-          "marginLeft":"-="+margin_x},
-          750,
-          function() {
-            $('#help-box').css({
-              'left':dest_position.left+"px",
-              'top':dest_position.top+450+'px'}).pause(200).fadeIn(2000).pause(8000).fadeOut(1000);
-
-
-            change_details(iid);
-            $('#details').css({'display':'block','left':dest_position.left+'px', 'top':dest_position.top+(450-40-$('#details').height())+'px'}).stop().animate({"opacity":"0.8"},500);
-          });
-
+        smallen(this);
+        
         if (big_img != undefined) {
-          $(big_img).shrink();
+          $(big_img).fadeTo("normal", 1);
         }
-
+        
         big_img = this;
+        $(big_img).fadeTo("normal", 0.33);        
 
         hide_tooltip();
-        hide_details();
+        
         var $block = $(this).parent().parent();
         var new_block_id = parseInt($block.attr('id').substring(1));
-        var offset = $block.offset().left;
+        var offset = $block.offset().top;
         select_block(new_block_id,offset);
       }
 
@@ -233,24 +207,25 @@ $(document).ready(function() {
       (current_block_id < max_block_id) ? select_block(current_block_id+1) : select_block(0);
       return false;
     });
+    
+    function crossfade_details_image(url,callback) {
+      var $back = $('#details-image-back');
+      var $front = $('#details-image');
+      
+      $back.stop().fadeTo(0,0).unbind("load").load(function() {
+        $back.fadeTo("slow",1);
+        $front.fadeTo("slow",0, function() {
+          $front.unbind("load").load(function() {
+            $front.fadeTo("slow",1, function() {
+              if (typeof(callback) === 'function') {
+                callback.call(this);
+              }
+            });
+          });
+          $front.attr('src', url)
+        });
+      });
+      $back.attr('src', url);
+    }
 
-  // DEVELOPMENT UTILITIES
-
-  // function update_z_status() {
-  //   $(".zindex").each(function() {
-  //     var k = $(this).parent().find("img").css('z-index');
-  //     $(this).text(k);
-  //     });
-  //   }
-  //
-  //   $(window).keydown(
-  //     function(event) {
-  //       switch(event.keyCode) {
-  //         case 90: // Letter "z"
-  //           update_z_status();
-  //           return false;
-  //       }
-  //     }
-  //   );
-  //
 });

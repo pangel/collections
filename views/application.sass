@@ -8,45 +8,6 @@ body
   :padding 0.4em
   :background-color #C8C7E7
   :float left
-  
-#switch
-  :font-size 0.8em
-  :line-height 2.3
-  :padding-bottom 1em
-  
-#grid
-  :padding-left 25px
-  :width 700px
-  a
-    :float left
-    :margin 0px 20px 20px 0px
-    :height 100px
-    :width 141px
-    img
-      :height 100px
-      :border 0px
-    
-#list
-  :margin-left 25px
-  .result
-    :clear both
-    &>a
-      :text-align right
-      :float left
-      :clear both
-      :margin-bottom 50px
-  .details
-    :margin 0px 0px 50px 190px
-    :padding-top 0.2em
-    :line-height 1.7
-  h3
-    :font-size 1em
-    
-  img
-    :width 149px
-    
-  p
-    :font-size 0.8em  
 
 #bottom
   :clear both
@@ -61,156 +22,135 @@ body
       :color white
       :background black
 
-#development, #current
-  width: 100%
-  font-size: 0.8em
-  line-height: 2
-  padding-left: 1em
-
+// Opera z-index bugfix
+#menu-wrapper, #search, #filter
+  z-index: 999999
 
 #menu-wrapper
-  width: 100%
-  margin: 25px 0px 0px 25px
+  margin: 25px 0px 70px 41px
 
   #title
     font-weight: bold
     margin-bottom: 1em
 
-
-#development
-  background-color: #F8FFC4
-  border-bottom: 1px solid #D2E741
-
-
-#current
-  background-color: #E1EFF7
-  border-bottom: 1px solid #9FC3D7
-
-
-#search
-  #query, #filter, #submit
-    float: left
-
-  > div > label
-    font-size: 0.8em
-
-  #format, #sources
-    margin-left: 2em
-
-  #query input
-    font-family: "Helvetica", "Arial", sans-serif
-
-// Opera z-index bugfix
-#menu-wrapper, #search, #filter
-  z-index: 999999
+  #search
+    #query, #filter, #submit
+      float: left
+  
+    > div > label
+      font-size: 0.8em
+  
+    #format, #sources
+      margin-left: 2em
+  
+    #query input
+      font-family: "Helvetica", "Arial", sans-serif
 
 #filter
   font-size: 0.8em
   //  position: relative
   line-height: 1.7
-a
-  &.filter-option
-    color: blue
-    font-variant: small-caps
-    font-weight: normal
-    padding: .2em 1em
-
-    &:hover
+  a
+    &.filter-option
+      color: blue
+      font-variant: small-caps
+      font-weight: normal
+      padding: .2em 1em
+  
+      &:hover
+        color: black
+        border: none
+        background: #BFBFBF
+        filter: alpha(opacity=90)
+        -moz-opacity: 0.90
+        -khtml-opacity: 0.90
+  
+    &.filter-option-activated
       color: black
       border: none
       background: #BFBFBF
       filter: alpha(opacity=90)
       -moz-opacity: 0.90
       -khtml-opacity: 0.90
+      background: #CCCCCC
+      text-decoration: none
+      border-bottom: 2px solid black
 
-  &.filter-option-activated
-    color: black
-    border: none
-    background: #BFBFBF
+  .selector
+    border-top: 1px solid #AAAAAA
+    padding: 0.3em
+    position: absolute
+    top: 1.6em
+    background: #CCCCCC
     filter: alpha(opacity=90)
     -moz-opacity: 0.90
     -khtml-opacity: 0.90
-    background: #CCCCCC
-    text-decoration: none
-    border-bottom: 2px solid black
+    visibility: hidden
+    z-index: 999999
 
-
-.selector
-  border-top: 1px solid #AAAAAA
-  padding: 0.3em
-  position: absolute
-  top: 1.6em
-  background: #CCCCCC
-  filter: alpha(opacity=90)
-  -moz-opacity: 0.90
-  -khtml-opacity: 0.90
-  visibility: hidden
-  z-index: 999999
-
-.selector-column
-  float: left
-  padding: 1em
-
-  &:hover
-    background-color: #B3B3B3
-
-  p.selector-title
-    font-variant: small-caps
-    text-transform: uppercase
-    margin-bottom: 0.8em
-    font-size: 1.1em
-    font-weight: bold
-
-  ul
-    display: none
-
-  li
-    border-top: 1px dashed #666666
-    clear: both
+  .selector-column
     float: left
-    line-height: 1.3
-    padding: 0.8em 0em
-    position: relative
-
+    padding: 1em
+  
     &:hover
-      background-color: #BBBBBB
-
-    input
-      vertical-align: top
-      margin-right: 0.5em
+      background-color: #B3B3B3
+  
+    p.selector-title
+      font-variant: small-caps
+      text-transform: uppercase
+      margin-bottom: 0.8em
+      font-size: 1.1em
+      font-weight: bold
+  
+    ul
+      display: none
+  
+    li
+      border-top: 1px dashed #666666
+      clear: both
       float: left
-
-    label
-      display: inline
-      width: 20em
-      letter-spacing: 0px
-
-.selector-actions
-  margin: 1em
-  padding-top: 1em
-  border-top: 1px solid #888888
-  clear: both
-
-  button
-    margin-right: 0.6em
-
-  a
-    color: blue
-
-    &:hover
-      color: red
-
-a.filter-options
-  font-variant: small-caps
-
+      line-height: 1.3
+      padding: 0.8em 0em
+      position: relative
+  
+      &:hover
+        background-color: #BBBBBB
+  
+      input
+        vertical-align: top
+        margin-right: 0.5em
+        float: left
+  
+      label
+        display: inline
+        width: 20em
+        letter-spacing: 0px
+  
+  .selector-actions
+    margin: 1em
+    padding-top: 1em
+    border-top: 1px solid #888888
+    clear: both
+  
+    button
+      margin-right: 0.6em
+  
+    a
+      color: blue
+  
+      &:hover
+        color: red
+  
+  a.filter-options
+    font-variant: small-caps
 
 #blocksmenu
-  margin-left: 25px
-  padding-top: 1em
-
+  margin-left: 34px
+  float: left
+  position: fixed
+  
   a.block-selector
     display: block
-    float: left
     font-variant: small-caps
     font-size: 0.7em
     background: #EFEFEF
@@ -218,17 +158,22 @@ a.filter-options
     margin: 1em 1em 1em 0em
     text-decoration: none
     color: black
+    width: 2em
+    height: 2em
+    line-height: 1.3
+    text-align: center
 
     &:hover
       background: #D7D7D7
-
+    
+    span
+      font-size: 1.6em
   p a
     font-variant: small-caps
 
   a
     &.block-menu
       display: block
-      float: left
       font-size: 0.7em
       padding: 0.5em
       margin: 1em 1em 1em 0em
@@ -245,41 +190,33 @@ a.filter-options
     &.block-selected
       background: #9B9B9B
 
-
-#menu a.block-selected:hover
-  background: #9B9B9B
-
-
-#blocksmenu
   #prev-block, #next-block
     padding: 0em
     margin-top: 1.4em
-    width: 28px
-    height: 21px
+    margin-left: 7px
+    width: 21px
+    height: 28px
 
   #prev-block
     background-image: url(../images/prev-block-off.gif)
-    margin-left: 15px
 
     &:hover
       background-image: url(../images/prev-block-on.gif)
 
   #next-block
     background-image: url(../images/next-block-off.gif)
-    margin-right: 3em
 
     &:hover
       background-image: url(../images/next-block-on.gif)
 
-
 #document
-  margin-left: 25px
-  width: 4100px
-  clear: both
-
+  margin-left: 100px
+  float: left
+  // WTF: If not, Firefox uses the children's (.imgblock) margin-bottom property ALSO as a margin-top property. WTF.
+  border: 1px solid transparent
   .imgblock
-    margin-right: 105px
-    float: left
+    display: block
+    margin-bottom: 100px
     // Need to set width, otherwise IE7 clears the containing floats.
     width: 525px
 
@@ -328,45 +265,49 @@ a.filter-options
     line-height: 1.2
     margin-bottom: 0
 
+#details-image, #details-image-back
+  width: 450px
+  position: fixed
+  top: 7em
+  right: 50px
+  // font-size is so top-position matches #details's top-position
+  font-size: 0.8em
+  // border: 1px solid blue
+  // height: 200px
+
+#details-image
+  z-index: 1
+  
+#details-image-back
+  z-index: -1
+
 #details
-  position: absolute
-  display: none
-  color: white
-  background: black
-  width: 560px
-  filter: alpha(opacity=0)
-  -moz-opacity: 0
-  -khtml-opacity: 0
-  opacity: 0
+  position: fixed
+  top: 3em
+  right: 50px
+  height: 4em
+  overflow: hidden
+  width: 410px
   z-index: 99999
   font-size: 0.8em
-  padding: 20px
-
+  padding: 0px 20px
+  
+  
   #details-title
     font-weight: bold
-
+    
   #details-collection
-    margin-top: 1em
-
+  
     a
-      background: white
-      color: black
-      padding: 3px
-      border: 2px solid black
       text-decoration: none
       &:hover
         border-color: white
         color: white
         background: black
-
-  a#details-link
-    display: block
-    padding-top: 1.3em
-    font-size: 0.6em
-
-  #details-collection, #details-description, #details-link
+  
+  #details-title, #details-collection
     display: none
-
+  
 #help-box
   position: absolute
   display: none
